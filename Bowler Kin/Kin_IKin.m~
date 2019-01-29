@@ -1,0 +1,76 @@
+syms t1 t2 t3 t4
+T = dh(0, 0, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% Transformations
+function T = transZ(z)
+    T = [   1, 0, 0, 0;
+            0, 1, 0, 0;
+            0, 0, 1, z;
+            0, 0, 0, 1]; 
+end
+function T = transY(y)
+    T = [   1, 0, 0, 0;
+            0, 1, 0, y;
+            0, 0, 1, 0;
+            0, 0, 0, 1]; 
+end
+
+function T = transX(x)
+    T = [   1, 0, 0, x;
+            0, 1, 0, 0;
+            0, 0, 1, 0;
+            0, 0, 0, 1]; 
+end
+
+
+function T = rotZ(theta)
+    % Assumes theta is in RAD not DEG
+    T = [   cos(theta), -sin(theta), 0, 0;
+            sin(theta),  cos(theta), 0, 0;
+                     0,           0, 1, 0;
+                     0,           0, 0, 1]; 
+end
+
+function T = rotY(theta)
+    % Assumes theta is in RAD not DEG
+    T = [   cos(theta), 0, sin(theta), 0;
+                     0, 1,          0, 0;
+           -sin(theta), 0, cos(theta), 0;
+                     0, 0,          0, 1];
+end
+
+function T = rotX(theta)
+    % Assumes theta is in RAD not DEG
+    T = [  1,          0,           0, 0;
+           0, cos(theta), -sin(theta), 0;
+           0, sin(theta),  cos(theta), 0;
+           0,          0,           0, 1];
+end
+
+
+%% DH Calculator
+function result = dh(d, r, theta, alpha)
+    result = [
+        cos(theta), -sin(theta)*cos(alpha),  sin(theta)*sin(alpha), r*cos(theta);
+        sin(theta),  cos(theta)*cos(alpha), -cos(theta)*sin(alpha), r*sin(theta);
+                 0,             sin(alpha),             cos(alpha),            d;
+             	 0,                      0,                      0,            1];
+        
+end
