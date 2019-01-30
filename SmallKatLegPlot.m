@@ -1,4 +1,4 @@
-function P = SmallKatLegPlot(Angles, LegLengths, JC)
+function PlotL1 = SmallKatLegPlot(Angles, LegLengths, JC)
 
 %% 3D Graphing
 
@@ -34,12 +34,14 @@ j4x = a3*sin(q2 + q3) + a2*sin(q2) + a4*sin(q2 + q3 + q4);
 j4y = sin(q1)*(a1 + a3*cos(q2 + q3) + a2*cos(q2) + a4*cos(q2 + q3 + q4));
 j4z = -cos(q1)*(a1 + a3*cos(q2 + q3) + a2*cos(q2) + a4*cos(q2 + q3 + q4));
 
-%% Global Transform
+JC = [x; y; z; 0];
 
-j1G = [j1x; j1y; j1z; 1];
-j2G = [j2x; j2y; j2z; 1];
-j3G = [j3x; j3y; j3z; 1];
-j4G = [j4x; j4y; j4z; 1];
+j1G = [j1x; j1y; j1z; 1] + JC;
+
+
+j2G = [j2x; j2y; j2z; 1] + JC;
+j3G = [j3x; j3y; j3z; 1] + JC;
+j4G = [j4x; j4y; j4z; 1] + JC;
 
 jG = [j1G j2G j3G j4G];
 

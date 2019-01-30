@@ -1,22 +1,25 @@
 %% Input parameters
 Base = [0; 0; 0];
-B=0;
+B= deg2rad(90)
 Y = 0; %the rotation angle of the bending plane.
 
 B2 = 0;
 Y2 = 0; %the rotation angle of the bending plane.
 
 %% Stage 1 variables
-r = 2 %the distance from the primary backbone to each secondary backbone on the disk.
+r = 12 %the distance from the primary backbone to each secondary backbone on the disk.
 n = 3; %the number of secondary backbones.
 theta = (2*pi)/n; %division angle (? = 2? / n) 
-h = 15; %distance between adjacent disks.
-l = 15.70796; %length of the flexible beam
+h = 5; %distance between adjacent disks.
+l = 151; %length of the flexible beam
 numlength = 10;
-x = 10; %numbered length segment
-s = (x/numlength)*l; %arc-length parameter of the segment OP (s=0 at the base disk and s=l at the end disk)
+x = 12; %numbered length segment
+s = (x/numlength)*l %arc-length parameter of the segment OP (s=0 at the base disk and s=l at the end disk)
 %ro %curvature radius of the primary backbone, defined in the bending plane.
-Bp = (s*B)/l;%the bending angle of the primary backbone tangent in the X1Z1 plane at the point P. ? is the bending angle at the end disk.
+Bp = (s*B)/l%the bending angle of the primary backbone tangent in the X1Z1 plane at the point P. ? is the bending angle at the end disk.
+CamD = 24;
+CamC = 2*pi*(CamD/2)
+
 
 %% Stage 2 variables
 r2 = 2 %the distance from the primary backbone to each secondary backbone on the disk.
@@ -43,14 +46,19 @@ q1=r*B*cos(Y)
 q2=r*B*cos(-Y+theta)
 q3=r*B*cos(Y+theta)
 
+NumRot1 = q1/CamC
+NumRot2 = q2/CamC
+NumRot3 = q3/CamC
+
+
 %% Stage 2 Math
 if (B2 == 0)
-    P2 = [0;0;s]
+    P2 = [0;0;s];
 else
 % X2 = (s2/Bp2)*(1-cos(Bp2));
 % Y2 = 0;
 % Z2 = (s2/Bp2)*(sin(Bp2));
-P2 = [(s2/Bp2)*(1-cos(Bp2))*cos(Y2); (s2/Bp2)*(1-cos(Bp2))*sin(Y2); (s2/Bp2)*sin(Bp2)]
+P2 = [(s2/Bp2)*(1-cos(Bp2))*cos(Y2); (s2/Bp2)*(1-cos(Bp2))*sin(Y2); (s2/Bp2)*sin(Bp2)];
 end
 q4=r2*B*cos(Y2)+r2*B2*cos(Y2);
 q5=r2*B*cos(-Y2+theta)+r2*B2*cos(-Y2+theta2);
@@ -70,7 +78,7 @@ roty = [cos(B) 0 sin(B);...
 %        0 sin(0) cos(0)];
  
 A = rotz*roty;
-P2 = A*P2
+P2 = A*P2;
 %Ouput  
 q1;
 q2;
@@ -78,7 +86,7 @@ q3;
 q4;
 q5;
 q6;
-Tailend = P+P2
+Tailend = P+P2;
 % R = [(cos(Y)^2)*cos(B) + (sin(Y)^2), cos(Y)*sin(Y)*cos(B) - cos(Y)*sin(Y), cos(Y)*sin(B);...
 %       cos(Y)*sin(Y)*cos(B)- cos(Y)*sin(Y), (sin(Y)^2)*cos(B) + cos(Y)^2, sin(Y)*sin(B);...
 %       -cos(Y)*sin(B), -sin(Y)*sin(B), cos(B)]

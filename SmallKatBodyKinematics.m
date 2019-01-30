@@ -1,0 +1,123 @@
+%% Body Kinematics
+
+%% Variables and Dimensions
+t1 = 0; %rotation around z
+t2 = 0; %rotation around y
+t3 = 0; %rotation around x
+x = 0; % translation in x
+y = 0; % translation in y
+z = 0; % translation in z
+
+% L2 L1
+%   |
+%   |
+% L3 L4
+
+L1x = 165;
+L1y = -38.2605;
+L1z = 0;
+L2x = 165;
+L2y = 38.2605;
+L2z = 0;
+L3x = -165;
+L3y = -38.2605;
+L3z = 0;
+L4x = -165;
+L4y = 38.2605;
+L4z = 0;
+
+Links1 = [0; 92; 75; 71.03];
+Links2 = [0; 92; 75; 71.03];
+Links3 = [0; 92; 75; 120];
+Links4 = [0; 92; 75; 120];
+
+%% Body Rotaions
+%syms x y z t1 t2 t3 L1x L1y L1z L2x L2y L2z L3x L3y L3z L4x L4y L4z
+
+Trans = [1 0 0 x;...
+     0 1 0 y;...
+     0 0 1 z;...
+     0 0 0 1];
+
+rotz = [cos(t1) -sin(t1) 0 0;...
+       sin(t1) cos(t1) 0 0;...
+       0 0 1 0
+       0 0 0 1];
+   
+roty = [cos(t2) 0 sin(t2) 0;...
+       0 1 0 0;...
+       -sin(t2) 0 cos(t2) 0;
+       0 0 0 1];
+   
+rotx = [1 0 0 0;...
+       0 cos(t3) -sin(t3) 0;...
+       0 sin(t3) cos(t3) 0;...
+       0 0 0 1];
+   
+ A = Trans*rotz*roty*rotx;
+L1coords = [L1x; L1y; L1z; 1];
+L2coords = [L2x; L2y; L2z; 1];
+L3coords = [L3x; L3y; L3z; 1];
+L4coords = [L4x; L4y; L4z; 1];
+L1 = A*L1coords;
+L2 = A*L2coords;
+L3 = A*L3coords;
+L4 = A*L4coords;
+
+Body = [L1; L2; L3; L4];
+%% Foot Position Transformation 
+
+% Feet Pos
+%           x  y  z  1
+FootPos1 = [165; -40; -150; deg2rad(30)];
+FootPos2 = [165; 38.2605; -150; deg2rad(30)];
+FootPos3 = [-50; -38.2605; -150; deg2rad(30)];
+FootPos4 = [-50; 38.2605; -150; deg2rad(30)];
+
+FT1 = [FootPos1(1); FootPos1(2); FootPos1(3); 1];
+FT2 = [FootPos2(1); FootPos2(2); FootPos2(3); 1];
+FT3 = [FootPos3(1); FootPos3(2); FootPos3(3); 1];
+FT4 = [FootPos4(1); FootPos4(2); FootPos4(3); 1];
+
+
+
+Brotz = [cos(t1) sin(t1) 0 0;...
+       -sin(t1) cos(t1) 0 0;...
+       0 0 1 0
+       0 0 0 1];
+
+%Convert to new Coord System
+B = Brotz;
+F1 = B*FT1;
+F2 = B*FT2;
+F3 = B*FT3;
+F4 = B*FT4;
+
+
+% FInd XYZ from Joint Positions
+zero = [0;0;0;0];
+LegPosData1 = (zero - L1) + F1;
+LegPosData2 = (zero - L2) + F2;
+LegPosData3 = (zero - L3) + F3;
+LegPosData4 = (zero - L4) + F4;
+LegPosData1(4) = FootPos1(4)
+LegPosData2(4) = FootPos2(4);
+LegPosData3(4) = FootPos3(4);
+LegPosData4(4) = FootPos4(4);
+
+%% IK
+
+L1angles = SmallKat4dofIK(LegPosData1,Links1,1);
+L2angles = SmallKat4dofIK(LegPosData2,Links2,2)
+L3angles = SmallKat4dofIK(LegPosData3,Links3,3)
+L4angles = SmallKat4dofIK(LegPosData4,Links4,4)
+
+%% Plot Data
+
+LegPlot1 = SmallKatLegPlot(L1angles, Links1, L1);
+LegPlot2 = SmallKatLegPlot(L2angles, Links2, L2)
+LegPlot3 = SmallKatLegPlot(L3angles, Links3, L3)
+LegPlot4 = SmallKatLegPlot(L4angles, Links4, L4)
+ 
+SmallKatBodyPlot(LegPlot1, LegPlot2, LegPlot3, LegPlot4, Body);
+
